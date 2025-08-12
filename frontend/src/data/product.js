@@ -3,7 +3,7 @@
       number: 1,
       title: 'Upload Your Photos',
       description: 'Choose the photos you want to produce with Botika. You can use photos of someone wearing your products or simple product flat lays. Make sure they\'re well-lit and show off your products naturally.',
-      image: '/assets/images/ai1.webp',
+      image: "/assets/images/ai1.webp",
     },
     {
       number: 2,
