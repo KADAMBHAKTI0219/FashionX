@@ -17,9 +17,11 @@ module.exports = {
           lighter: '#BCAAA4',
           lightest: '#D7CCC8',
           bg: '#EFEBE9',
-          cream: '#FFF8E1',
-          almond: '#FFFBF2'
+          cream: '#FFF8E1'
         },
+        almond: '#FFFBF2',
+        vanilla: '#F5F5DC',
+        black: '#121212',
       },
       animation: {
         'fadeIn': 'fadeIn 0.5s ease-in-out',
