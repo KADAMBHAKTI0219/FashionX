@@ -4,9 +4,9 @@ import Image from 'next/image';
 
 const BlogBanner = () => {
   return (
-    <div className="max-w-7xl mx-auto my-10 sm:my-16 md:my-20 px-4 sm:px-6 lg:px-8">
+    <div className="max-w-7xl mx-auto my-10 sm:my-16 md:my-32  px-4 sm:px-6 lg:px-8">
       {/* Title and subtitle */}
-      <div className="text-center mb-6 sm:mb-8 md:mb-12">
+      <div className="text-center mb-6 sm:mb-8 md:mb-12 py-10">
         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 sm:mb-3 md:mb-4">The Thread</h1>
         <p className="text-sm sm:text-base md:text-lg lg:text-xl px-2">Discover new ways to elevate your brand with tips and trends from the fashion world</p>
       </div>

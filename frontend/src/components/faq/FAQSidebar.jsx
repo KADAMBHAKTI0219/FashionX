@@ -8,13 +8,13 @@ const FAQSidebar = ({ activeSection, onSectionClick }) => {
   ];
   
   return (
-    <nav className="w-full md:w-64 bg-white rounded-md border border-gray-200 shadow-sm sticky top-4">
+    <nav className="w-full md:w-64 bg-white rounded-md border border-gray-200 shadow-sm">
       {sections.map((section, index) => (
         <div 
           key={section.id}
-          className={`py-2 sm:py-3 px-3 sm:px-4 cursor-pointer transition-all duration-200 text-sm sm:text-base ${
+          className={`py-3 px-4 cursor-pointer transition-all duration-300 text-base ${
             activeSection === section.id 
-              ? 'bg-gray-50 border-l-4 border-l-gray-900 text-gray-900 font-medium' 
+              ? 'bg-gray-50 border-l-4 border-l-coffee text-gray-900 font-medium' 
               : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
           }`}
           onClick={() => onSectionClick(section.id)}
@@ -25,5 +25,6 @@ const FAQSidebar = ({ activeSection, onSectionClick }) => {
     </nav>
   );
 };
+
 
 export default FAQSidebar;

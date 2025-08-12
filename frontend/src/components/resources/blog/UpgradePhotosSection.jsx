@@ -6,7 +6,7 @@ import Link from 'next/link';
 const UpgradePhotosSection = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
-      <div className="bg-[#1E1E1E] text-white rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-12 lg:p-16 text-center">
+      <div className="bg-coffee text-white rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-12 lg:p-16 text-center">
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-4">Ready to upgrade your photos?</h2>
         <p className="text-base sm:text-lg lg:text-xl max-w-3xl mx-auto mb-1 sm:mb-2">
           With Botika's app, you have our AI generated models for fashion right in your pocket.

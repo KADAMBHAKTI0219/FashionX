@@ -30,32 +30,32 @@ const FAQPage = () => {
     }
   };
   
-  // Update active section based on scroll position
+  // Update active section based on scroll position using IntersectionObserver
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY + 100; // Adding offset
-      
-      const sections = [
-        { id: 'general', ref: generalRef },
-        { id: 'product', ref: productRef },
-        { id: 'pricing', ref: pricingRef }
-      ];
-      
-      for (const section of sections) {
-        if (section.ref.current) {
-          const offsetTop = section.ref.current.offsetTop;
-          const offsetHeight = section.ref.current.offsetHeight;
-          
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(section.id);
-            break;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // Extract section id from the element id
+            const sectionId = entry.target.id;
+            setActiveSection(sectionId);
           }
-        }
-      }
+        });
+      },
+      { threshold: 0.3, rootMargin: '-100px 0px -50% 0px' } // Adjust rootMargin to control when sections are considered in view
+    );
+
+    // Observe all section refs
+    if (generalRef.current) observer.observe(generalRef.current);
+    if (productRef.current) observer.observe(productRef.current);
+    if (pricingRef.current) observer.observe(pricingRef.current);
+
+    return () => {
+      // Cleanup observer
+      if (generalRef.current) observer.unobserve(generalRef.current);
+      if (productRef.current) observer.unobserve(productRef.current);
+      if (pricingRef.current) observer.unobserve(pricingRef.current);
     };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   
   // Toggle mobile menu
@@ -64,7 +64,7 @@ const FAQPage = () => {
   };
   
   return (
-    <div className="bg-white min-h-screen overflow-auto">
+    <div className="bg-white min-h-screen">
       {/* FAQ Header */}
       <div className="bg-coffee text-white py-16 sm:py-24 lg:py-32">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -74,7 +74,7 @@ const FAQPage = () => {
       </div>
       
       {/* Mobile menu toggle - only visible on mobile */}
-      <div className="md:hidden sticky top-0 bg-white z-10 border-b p-3 sm:p-4">
+      <div className="md:hidden sticky top-0 bg-white z-50 border-b p-3 sm:p-4">
         <button 
           onClick={toggleMobileMenu}
           className="flex items-center text-gray-700 focus:outline-none w-full justify-between"
@@ -87,44 +87,34 @@ const FAQPage = () => {
         </button>
         
         {isMobileMenuOpen && (
-          <div className="absolute top-full left-0 right-0 bg-white shadow-md border-b z-20">
+          <div className="absolute top-full left-0 right-0 bg-white shadow-md border-b z-50">
             <FAQSidebar activeSection={activeSection} onSectionClick={scrollToSection} />
           </div>
         )}
       </div>
       
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 relative">
-        <div className="flex flex-col md:flex-row gap-4 sm:gap-6 lg:gap-8 relative min-h-screen">
-          {/* Sidebar - Fixed on desktop */}
-          <div className="hidden md:block md:w-1/4 lg:w-1/5 h-full">
-            <div className="sticky" style={{ position: 'sticky', top: '20px', height: 'fit-content', paddingRight: '20px' }}>
+        <div className="flex flex-col md:flex-row gap-4 sm:gap-6 lg:gap-8 relative">
+          {/* Sidebar - Fixed on desktop, sticky after hero section */}
+          <div className="md:w-1/4 lg:w-1/5">
+            <div style={{ position: 'sticky', top: '8px', height: 'fit-content' }}>
               <FAQSidebar activeSection={activeSection} onSectionClick={scrollToSection} />
             </div>
           </div>
 
           
-          {/* FAQ Content - Scrollable */}
-          <div className="md:w-3/4 lg:w-4/5 pb-4 sm:pb-6 lg:pb-8 md:pl-2 lg:pl-4 overflow-auto" style={{ 
-            height: 'auto', 
-            minHeight: 'calc(100vh - 200px)',
-            scrollbarWidth: 'none', /* Firefox */
-            msOverflowStyle: 'none',  /* IE and Edge */
-            WebkitOverflowScrolling: 'touch', /* Enable smooth scrolling on iOS */
-          }}>
-            <style jsx>{`
-              div::-webkit-scrollbar {
-                display: none; /* Chrome, Safari and Opera */
-              }
-            `}</style>
-            <div ref={generalRef} id="general" className="mb-8 sm:mb-12 lg:mb-16">
+          {/* FAQ Content */}
+          <div className="w-full md:w-3/4 lg:w-4/5 pb-4 sm:pb-6 lg:pb-8 md:pl-2 lg:pl-4">
+
+            <div ref={generalRef} id="general" className="mb-8 sm:mb-12 lg:mb-16 scroll-mt-24">
               <GeneralFAQs />
             </div>
             
-            <div ref={productRef} id="product" className="mb-8 sm:mb-12 lg:mb-16">
+            <div ref={productRef} id="product" className="mb-8 sm:mb-12 lg:mb-16 scroll-mt-24">
               <ProductFAQs />
             </div>
             
-            <div ref={pricingRef} id="pricing" className="mb-8 sm:mb-12 lg:mb-16">
+            <div ref={pricingRef} id="pricing" className="mb-8 sm:mb-12 lg:mb-16 scroll-mt-24">
               <PricingFAQs />
             </div>
           </div>

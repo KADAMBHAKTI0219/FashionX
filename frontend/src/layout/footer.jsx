@@ -3,26 +3,57 @@ import { footerData } from '@/data/footer';
 
 const Footer = () => {
   return (
-    <footer className="bg-[#1c1c1c] text-white py-12">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-10">
+    <footer className="bg-coffee text-white py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 mb-12">
           {/* Logo and Description */}
-          <div className="md:col-span-5">
-            <div className="flex items-center mb-4">
-              <span className="text-white font-bold text-xl">F</span>
-              <span className="ml-1 text-white font-bold text-xl">FashionX</span>
+          <div className="lg:col-span-4 sm:col-span-2">
+            <div className="flex items-center mb-6">
+              <span className="text-white font-bold text-2xl">Fashion</span>
+              <span className="text-blue-400 font-bold text-2xl">X</span>
             </div>
-            <p className="text-gray-300 text-sm max-w-md">
+            <p className="text-gray-400 text-sm max-w-md leading-relaxed">
               {footerData.companyDescription}
             </p>
+            
+            {/* Social Media Icons */}
+            <div className="flex space-x-5 mt-8">
+              {footerData.socialMedia.map((social, index) => (
+                <Link 
+                  key={index} 
+                  href={social.url} 
+                  className="text-gray-400 hover:text-blue-400 transition-colors"
+                  aria-label={social.name}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <SocialIcon type={social.icon} />
+                </Link>
+              ))}
+            </div>
           </div>
 
           {/* Company Links */}
-          <div className="md:col-span-3">
+          <div className="lg:col-span-2 sm:col-span-1">
+            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Company</h3>
             <ul className="space-y-3">
               {footerData.links.map((link, index) => (
                 <li key={index}>
-                  <Link href={link.url} className="text-gray-300 hover:text-white transition-colors">
+                  <Link href={link.url} className="text-gray-400 hover:text-blue-400 text-sm transition-colors">
+                    {link.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Resources Links */}
+          <div className="lg:col-span-2 sm:col-span-1">
+            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Resources</h3>
+            <ul className="space-y-3">
+              {footerData.resources.map((link, index) => (
+                <li key={index}>
+                  <Link href={link.url} className="text-gray-400 hover:text-blue-400 text-sm transition-colors">
                     {link.title}
                   </Link>
                 </li>
@@ -31,47 +62,34 @@ const Footer = () => {
           </div>
 
           {/* Contact Links */}
-          <div className="md:col-span-4">
+          <div className="lg:col-span-4 sm:col-span-2">
+            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">Contact</h3>
             <ul className="space-y-3">
               {footerData.contactLinks.map((link, index) => (
                 <li key={index}>
-                  <Link href={link.url} className="text-gray-300 hover:text-white transition-colors">
+                  <Link href={link.url} className="text-gray-400 hover:text-blue-400 text-sm transition-colors">
                     {link.title}
                   </Link>
                 </li>
               ))}
             </ul>
-
-            {/* Social Media Icons */}
-            <div className="flex space-x-4 mt-6">
-              {footerData.socialMedia.map((social, index) => (
-                <Link 
-                  key={index} 
-                  href={social.url} 
-                  className="text-gray-300 hover:text-white transition-colors"
-                  aria-label={social.name}
-                >
-                  <SocialIcon type={social.icon} />
-                </Link>
-              ))}
-            </div>
           </div>
         </div>
 
         {/* Divider */}
-        <div className="border-t border-gray-700 my-8"></div>
+        <div className="border-t border-gray-800 pt-8"></div>
 
         {/* Copyright and Legal Links */}
-        <div className="flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
+        <div className="flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
           <div className="mb-4 md:mb-0">
             {footerData.copyright}
           </div>
-          <div className="flex space-x-6">
+          <div className="flex flex-wrap gap-6">
             {footerData.legalLinks.map((link, index) => (
               <Link 
                 key={index} 
                 href={link.url} 
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-500 hover:text-blue-400 transition-colors text-sm"
               >
                 {link.title}
               </Link>

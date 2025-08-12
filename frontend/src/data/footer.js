@@ -12,6 +12,14 @@ export const footerData = {
     {
       title: "Blog",
       url: "/blog"
+    },
+    {
+      title: "Careers",
+      url: "/careers"
+    },
+    {
+      title: "Partners",
+      url: "/partners"
     }
   ],
   contactLinks: [
@@ -22,6 +30,24 @@ export const footerData = {
     {
       title: "Send us a message",
       url: "/contact"
+    },
+    {
+      title: "Support",
+      url: "/support"
+    }
+  ],
+  resources: [
+    {
+      title: "Documentation",
+      url: "/docs"
+    },
+    {
+      title: "Tutorials",
+      url: "/tutorials"
+    },
+    {
+      title: "Case Studies",
+      url: "/case-studies"
     }
   ],
   socialMedia: [

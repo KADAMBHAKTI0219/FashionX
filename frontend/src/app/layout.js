@@ -3,6 +3,7 @@ import "./globals.css";
 import "../../public/assets/fonts/ubuntu.css";
 import Navbar from "../layout/navbar";
 import Footer from "../layout/footer";
+import ClientLayout from "../components/ClientLayout.jsx";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,9 +26,9 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden`}
       >
-        <Navbar />
-        {children}
-        <Footer />
+        <ClientLayout>
+          {children}
+        </ClientLayout>
       </body>
     </html>
   );

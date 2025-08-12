@@ -62,7 +62,7 @@ const Navbar = () => {
         </div>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex space-x-8">
+        <div className="hidden lg:flex space-x-8">
           {navbar.map((item) => (
             item.hasDropdown ? (
               <div key={item.id} className="relative group">
@@ -72,14 +72,14 @@ const Navbar = () => {
                   {item.title}
                   <FiChevronDown className="ml-1" />
                 </button>
-                <div className="absolute -right-120 mt-2 min-w-5xl rounded-md shadow-xl bg-white border border-gray-100 transition-all duration-200  opacity-0 invisible group-hover:opacity-100 group-hover:visible z-50">
-                  <div className="py-2 w-full">
+                <div className="absolute right-0 mt-2 w-56 rounded-lg shadow-lg bg-white border border-gray-100 transition-all duration-300 transform origin-top-right opacity-0 invisible group-hover:opacity-100 group-hover:visible z-50">
+                  <div className="py-2 w-full rounded-lg overflow-hidden">
                     {item.title === "Resources" && (
-                      <div className="text-sm font-medium text-gray-500 px-4 py-2 border-b border-gray-100">
-                        Resources
+                      <div className="text-sm font-bold text-gray-700 px-4 py-2 border-b border-gray-100 ">
+                        {item.title}
                       </div>
                     )}
-                    <div className="flex flex-col w-full text-center block">
+                    <div className="flex flex-col w-full">
                       {item.dropdownItems && item.dropdownItems.map((dropItem, index) => {
                         let IconComponent;
                         switch(dropItem.icon) {
@@ -100,10 +100,10 @@ const Navbar = () => {
                           <div key={dropItem.id} className="w-full">
                             <Link 
                               href={dropItem.link} 
-                              className="flex items-center  text-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors w-full"
+                              className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-coffee transition-colors duration-200 w-full"
                             >
-                              <IconComponent className="text-gray-500" size={18} />
-                              {dropItem.title}
+                              <IconComponent className="text-coffee" size={18} />
+                              <span>{dropItem.title}</span>
                             </Link>
                             {index !== item.dropdownItems.length - 1 && (
                               <div className="border-b border-gray-100"></div>
@@ -128,7 +128,7 @@ const Navbar = () => {
         </div>
 
         {/* Login/Try Now Buttons */}
-        <div className="hidden md:flex items-center space-x-4">
+        <div className="hidden lg:flex items-center space-x-4">
           <div>
             <LoginButton />
           </div>
@@ -141,76 +141,83 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Menu Button */}
-        <div className="md:hidden">
+        <div className="lg:hidden">
           <button
             onClick={toggleMenu}
             className={`hover:text-coffee focus:outline-none ${isScrolled ? 'text-gray-700' : 'text-white'}`}
           >
-            {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+            <FiMenu size={24} />
           </button>
         </div>
       </div>
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden mt-4 py-4 px-4 bg-white border-t border-b border-gray-200">
-          <div className="flex flex-col space-y-4">
+        <div className="fixed top-0 right-0 h-full w-full bg-black/60 bg-opacity-50 z-50">
+          <div className="h-full w-[60%] ml-auto bg-white py-4 px-4 border-l border-gray-200 overflow-y-auto">
+            <div className="flex justify-end mb-4">
+              <button
+                onClick={toggleMenu}
+                className="text-gray-700 hover:text-coffee focus:outline-none"
+              >
+                <FiX size={24} />
+              </button>
+            </div>
+            <div className="flex flex-col space-y-4">
             {navbar.map((item) => (
               item.hasDropdown ? (
                 <div key={item.id}>
                   <button 
                     onClick={() => setResourcesOpen(!resourcesOpen)}
-                    className="flex items-center text-gray-700 hover:text-coffee transition-colors duration-300 w-full text-left"
+                    className="flex items-center justify-between text-gray-700 hover:text-coffee transition-colors duration-300 w-full text-left py-2 px-1 rounded-md hover:bg-gray-50"
                   >
-                    {item.title}
-                    <FiChevronDown className="ml-1" />
+                    <span className="font-medium">{item.title}</span>
+                    <FiChevronDown className={`ml-1 transition-transform duration-300 ${resourcesOpen ? 'transform rotate-180' : ''}`} />
                   </button>
-                  {resourcesOpen && item.dropdownItems && (
-                    <div className="mt-2 bg-gray-50 rounded-md border border-gray-100 w-full overflow-hidden">
-                      {item.title === "Resources" && (
-                        <div className="text-sm font-medium text-gray-500 px-4 py-2 bg-white border-b border-gray-100">
-                          Resources
-                        </div>
-                      )}
-                      <div className="flex flex-col w-full">
-                        {item.dropdownItems.map((dropItem, index) => {
-                          let IconComponent;
-                          switch(dropItem.icon) {
-                            case 'HelpCircle':
-                              IconComponent = FiHelpCircle;
-                              break;
-                            case 'FileText':
-                              IconComponent = FiFileText;
-                              break;
-                            case 'BookOpen':
-                              IconComponent = FiBookOpen;
-                              break;
-                            default:
-                              IconComponent = FiHelpCircle;
-                          }
-                          
-                          return (
-                            <div key={dropItem.id} className="w-full">
-                              <Link 
-                                href={dropItem.link} 
-                                className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-white transition-colors duration-200 w-full"
-                                onClick={() => {
-                                  setResourcesOpen(false);
-                                  setIsMenuOpen(false);
-                                }}
-                              >
-                                <IconComponent className="text-gray-500" size={18} />
-                                {dropItem.title}
-                              </Link>
-                              {index !== item.dropdownItems.length - 1 && (
-                                <div className="border-b border-gray-100"></div>
-                              )}
-                            </div>
-                          );
-                        })}
+                  <div className={`mt-2 bg-white rounded-lg border border-gray-100 w-full overflow-hidden transition-all duration-300 ${resourcesOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 invisible'}`}>
+                    {item.title === "Resources" && (
+                      <div className="text-sm font-bold text-gray-700 px-4 py-2 bg-gray-50 border-b border-gray-100">
+                        {item.title}
                       </div>
+                    )}
+                    <div className="flex flex-col w-full">
+                      {item.dropdownItems && item.dropdownItems.map((dropItem, index) => {
+                        let IconComponent;
+                        switch(dropItem.icon) {
+                          case 'HelpCircle':
+                            IconComponent = FiHelpCircle;
+                            break;
+                          case 'FileText':
+                            IconComponent = FiFileText;
+                            break;
+                          case 'BookOpen':
+                            IconComponent = FiBookOpen;
+                            break;
+                          default:
+                            IconComponent = FiHelpCircle;
+                        }
+                        
+                        return (
+                          <div key={dropItem.id} className="w-full">
+                            <Link 
+                              href={dropItem.link} 
+                              className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-coffee transition-colors duration-200 w-full"
+                              onClick={() => {
+                                setResourcesOpen(false);
+                                setIsMenuOpen(false);
+                              }}
+                            >
+                              <IconComponent className="text-coffee" size={18} />
+                              <span>{dropItem.title}</span>
+                            </Link>
+                            {index !== item.dropdownItems.length - 1 && (
+                              <div className="border-b border-gray-100"></div>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
-                  )}
+                  </div>
                 </div>
               ) : (
                 <Link
@@ -236,6 +243,7 @@ const Navbar = () => {
               </Link>
             </div>
           </div>
+        </div>
         </div>
       )}
     </nav>
