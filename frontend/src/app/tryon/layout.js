@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '../../components/dashboard/Sidebar';
 
-export default function DashboardLayout({ children }) {
+export default function TryOnLayout({ children }) {
   const router = useRouter();
 
   useEffect(() => {

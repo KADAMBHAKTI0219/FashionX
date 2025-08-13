@@ -1,107 +1,172 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
+import { 
+  LayoutDashboard, 
+  User, 
+  Shirt, 
+  Zap, 
+  Settings, 
+  LogOut, 
+  Menu, 
+  X,
+  Home
+} from 'lucide-react';
 
 const Sidebar = () => {
   const pathname = usePathname();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(true);
-  const [windowWidth, setWindowWidth] = useState(0);
+  const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Set initial window width
-    setWindowWidth(window.innerWidth);
-    
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
   }, []);
 
-  const isMobile = windowWidth < 768;
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    toast.success('Logged out successfully!');
+    router.push('/');
+  };
+
+  const menuItems = [
+    {
+      name: 'Dashboard',
+      href: '/dashboard',
+      icon: LayoutDashboard,
+      current: pathname === '/dashboard'
+    },
+    {
+      name: 'Models',
+      href: '/models',
+      icon: User,
+      current: pathname === '/models'
+    },
+    {
+      name: 'Clothes',
+      href: '/clothes',
+      icon: Shirt,
+      current: pathname === '/clothes'
+    },
+    {
+      name: 'Try-On',
+      href: '/tryon',
+      icon: Zap,
+      current: pathname === '/tryon'
+    }
+  ];
 
   return (
     <>
       {/* Mobile menu button */}
-      {isMobile && (
-        <button 
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="fixed top-4 right-4 z-50 p-2 rounded-md bg-white shadow-md"
+      <div className="md:hidden fixed top-4 left-4 z-50">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="bg-white p-2 rounded-lg shadow-lg text-gray-600 hover:text-gray-900"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#6F4E37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            {isMobileMenuOpen ? (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            )}
-          </svg>
+          {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
+      </div>
+
+      {/* Overlay for mobile */}
+      {isOpen && (
+        <div 
+          className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          onClick={() => setIsOpen(false)}
+        />
       )}
 
-      <div className={`${isMobile ? 'w-3/4' : 'w-64'} h-screen bg-white border-r border-[#EFDECD] fixed left-0 top-0 z-40 transition-transform duration-300 ${isMobile && !isMobileMenuOpen ? '-translate-x-full' : 'translate-x-0'}`}>
-      <div className="p-4 border-b border-[#EFDECD]">
-        <div className="flex items-center">
-          <img src="/assets/images/logo.png" alt="" className=' h-10 mx-auto'/>
-        </div>
-      </div>
-      
-      <nav className="mt-6">
-        <ul className="space-y-2 px-2">
-          <li>
-            <Link href="/dashboard" className="flex items-center justify-between px-4 py-3 text-[#6F4E37] bg-[#EFDECD] rounded-lg">
-              <span>Home</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-              </svg>
+      {/* Sidebar */}
+      <div className={`
+        fixed top-0 left-0 h-full bg-white shadow-lg z-40 transition-transform duration-300 ease-in-out
+        ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0
+        w-64 md:w-64
+      `}>
+        <div className="flex flex-col h-full">
+          {/* Logo */}
+          <div className="p-6 border-b border-[#e7ded0]">
+            <Link href="/" className="flex items-center space-x-2">
+              <img 
+                src="/assets/images/logo.png" 
+                alt="FashionX" 
+                className="h-10 w-auto"
+              />
             </Link>
-          </li>
-         
-          <li className="relative group">
-            <Link href="/dashboard/project" className="flex items-center justify-between px-4 py-3 text-[#6F4E37] hover:bg-[#EFDECD] rounded-lg">
-              <span>Projects</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-              </svg>
-            </Link>
-          </li>
-          <li>
-            <Link 
-              href="/dashboard/history" 
-              className={`flex items-center justify-between px-4 py-3 text-[#6F4E37] ${pathname.startsWith('/dashboard/history') ? 'bg-[#EFDECD]' : 'hover:bg-[#EFDECD]'} rounded-lg`}
-            >
-              <span>History</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </Link>
-          </li>
-        </ul>
-      </nav>
-      
-      <div className="absolute bottom-0 w-full p-4 border-t border-[#EFDECD]">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <p className="text-sm font-medium">John Doe</p>
-              <p className="text-xs text-gray-500">Free Plan</p>
-            </div>
           </div>
-          <button className="text-gray-500 hover:text-gray-700">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-          </button>
+
+          {/* User Info */}
+          {user && (
+            <div className="p-6 border-b border-[#e7ded0]">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-[#e7ded0] rounded-full flex items-center justify-center">
+                  <User className="w-6 h-6 text-[#26140c]" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-[#26140c]">
+                    {user.firstName} {user.lastName}
+                  </p>
+                  <p className="text-xs text-[#aa7156]">{user.email}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Navigation */}
+          <nav className="flex-1 p-6">
+            <ul className="space-y-2">
+              {menuItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <li key={item.name}>
+                    <Link
+                       href={item.href}
+                       onClick={() => setIsOpen(false)}
+                       className={`
+                         flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200
+                         ${
+                           item.current
+                             ? 'bg-[#e7ded0] text-[#26140c] border-r-2 border-[#aa7156]'
+                             : 'text-[#aa7156] hover:bg-[#e7ded0] hover:text-[#26140c]'
+                         }
+                       `}
+                     >
+                      <Icon className="w-5 h-5" />
+                      <span className="font-medium">{item.name}</span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+
+          {/* Bottom Actions */}
+          <div className="p-6 border-t border-[#e7ded0] space-y-2">
+            <Link
+              href="/"
+              className="flex items-center space-x-3 px-4 py-3 rounded-lg text-[#aa7156] hover:bg-[#e7ded0] hover:text-[#26140c] transition-colors duration-200"
+            >
+              <Home className="w-5 h-5" />
+              <span className="font-medium">Back to Home</span>
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors duration-200"
+            >
+              <LogOut className="w-5 h-5" />
+              <span className="font-medium">Logout</span>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Main content spacer for desktop */}
+      <div className="hidden md:block w-64 flex-shrink-0"></div>
     </>
   );
 };

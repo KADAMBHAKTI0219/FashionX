@@ -2,66 +2,100 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 import { FcGoogle } from 'react-icons/fc';
 import { FaApple } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
 import { MdEmail } from 'react-icons/md';
+import { Eye, EyeOff } from 'lucide-react';
 
 const LoginModal = ({ isOpen, onClose, initialMode = 'login' }) => {
   const router = useRouter();
   const [isLoginMode, setIsLoginMode] = useState(initialMode === 'login');
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
-  const [isEmailSent, setIsEmailSent] = useState(false);
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [verificationCode, setVerificationCode] = useState('');
+  const [showEmailForm, setShowEmailForm] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: ''
+  });
 
   if (!isOpen) return null;
 
-  const handleEmailSubmit = (e) => {
-    e.preventDefault();
-    if (!email) return;
-    if (!isLoginMode && !name) return;
-    
-    // Simulate sending verification email
-    setTimeout(() => {
-      setIsEmailSent(true);
-    }, 1000);
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
 
-  const handleVerification = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!verificationCode) return;
-    
-    // Simulate verification process
-    setIsVerifying(true);
-    setTimeout(() => {
-      // Redirect to dashboard after successful verification
-      router.push('/dashboard');
-    }, 1500);
+    setLoading(true);
+
+    try {
+      const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      
+      if (isLoginMode) {
+        // Login
+        const response = await axios.post(`${baseURL}/api/auth/login`, {
+          email: formData.email,
+          password: formData.password
+        });
+        
+        if (response.data.success) {
+          localStorage.setItem('token', response.data.data.token);
+          localStorage.setItem('user', JSON.stringify(response.data.data.user));
+          axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.data.token}`;
+          toast.success('Login successful!');
+          onClose();
+          router.push('/dashboard');
+        }
+      } else {
+        // Register
+        const response = await axios.post(`${baseURL}/api/auth/signup`, {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          password: formData.password
+        });
+        
+        if (response.data.success) {
+          toast.success('Registration successful! Please login.');
+          setIsLoginMode(true);
+          setFormData({ ...formData, firstName: '', lastName: '', password: '' });
+        }
+      }
+    } catch (error) {
+      console.error('Auth error:', error);
+      toast.error(error.response?.data?.message || 'Authentication failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleGoogleAuth = () => {
-    // Simulate Google auth and redirect
-    setTimeout(() => {
-      router.push('/dashboard');
-    }, 1000);
+    // TODO: Implement Google OAuth
+    toast.info('Google authentication coming soon!');
   };
 
   const handleAppleAuth = () => {
-    // Simulate Apple auth and redirect
-    setTimeout(() => {
-      router.push('/dashboard');
-    }, 1000);
+    // TODO: Implement Apple OAuth
+    toast.info('Apple authentication coming soon!');
   };
   
   const toggleAuthMode = () => {
     setIsLoginMode(!isLoginMode);
-    setIsEmailSent(false);
-    setIsVerifying(false);
-    setEmail('');
-    setName('');
-    setVerificationCode('');
+    setShowEmailForm(false);
+    setFormData({
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: ''
+    });
   };
 
   return (
@@ -105,7 +139,7 @@ const LoginModal = ({ isOpen, onClose, initialMode = 'login' }) => {
             </p>
           </div>
 
-          {!isEmailSent ? (
+          {!showEmailForm ? (
             <div className="space-y-4">
               <button
                 onClick={handleGoogleAuth}
@@ -124,29 +158,47 @@ const LoginModal = ({ isOpen, onClose, initialMode = 'login' }) => {
               </button>
               
               <button
-                onClick={() => setIsEmailSent(true)}
+                onClick={() => setShowEmailForm(true)}
                 className="w-full flex items-center justify-center gap-2 border border-gray-300 rounded-full py-3 px-4 hover:bg-gray-50 transition-colors text-gray-900 font-medium"
               >
                 <MdEmail size={20} />
                 <span>Continue with Email</span>
               </button>
             </div>
-          ) : !isVerifying ? (
-            <form onSubmit={handleEmailSubmit} className="space-y-4">
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
               {!isLoginMode && (
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-900 mb-1">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Enter your full name"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-900 text-gray-900 bg-white"
-                    required
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-900 mb-1">
+                      First Name
+                    </label>
+                    <input
+                      type="text"
+                      id="firstName"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleChange}
+                      placeholder="First name"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-900 text-gray-900 bg-white"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-900 mb-1">
+                      Last Name
+                    </label>
+                    <input
+                      type="text"
+                      id="lastName"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                      placeholder="Last name"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-900 text-gray-900 bg-white"
+                      required
+                    />
+                  </div>
                 </div>
               )}
               <div>
@@ -156,48 +208,52 @@ const LoginModal = ({ isOpen, onClose, initialMode = 'login' }) => {
                 <input
                   type="email"
                   id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   placeholder="Enter your email"
                   className="w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-900 text-gray-900 bg-white"
                   required
                 />
               </div>
-              <button
-                type="submit"
-                className="w-full bg-gray-900 text-white rounded-full py-3 px-4 hover:bg-gray-800 transition-colors font-medium"
-              >
-                Send Verification Link
-              </button>
-              <p className="text-center text-sm text-gray-900 font-medium mt-4">
-                We'll send you a verification link to your email.
-              </p>
-            </form>
-          ) : (
-            <form onSubmit={handleVerification} className="space-y-4">
               <div>
-                <label htmlFor="verification" className="block text-sm font-medium text-gray-900 mb-1">
-                  Verification Code
+                <label htmlFor="password" className="block text-sm font-medium text-gray-900 mb-1">
+                  Password
                 </label>
-                <input
-                  type="text"
-                  id="verification"
-                  value={verificationCode}
-                  onChange={(e) => setVerificationCode(e.target.value)}
-                  placeholder="Enter verification code"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-900 text-gray-900 bg-white"
-                  required
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Enter your password"
+                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-900 text-gray-900 bg-white"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
               </div>
               <button
                 type="submit"
-                className="w-full bg-gray-900 text-white rounded-full py-3 px-4 hover:bg-gray-800 transition-colors font-medium"
+                disabled={loading}
+                className="w-full bg-gray-900 text-white rounded-full py-3 px-4 hover:bg-gray-800 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLoginMode ? 'Verify & Sign In' : 'Verify & Create Account'}
+                {loading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    {isLoginMode ? 'Signing in...' : 'Creating account...'}
+                  </div>
+                ) : (
+                  isLoginMode ? 'Sign In' : 'Create Account'
+                )}
               </button>
-              <p className="text-center text-sm text-gray-900 font-medium mt-4">
-                Check your email for the verification code we sent to {email}
-              </p>
             </form>
           )}
 
