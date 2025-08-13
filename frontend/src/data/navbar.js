@@ -18,24 +18,18 @@ export const navbar =[
         dropdownItems: [
             {
                 id: 1,
-                title: "Help Center",
-                link: "/help-center",
-                icon: "HelpCircle"
-            },
-            {
-                id: 2,
                 title: "Blog",
                 link: "/blog",
                 icon: "FileText"
             },
             {
-                id: 3,
+                id: 2,
                 title: "Case Studies",
                 link: "/case-studies",
                 icon: "BookOpen"
             },
             {
-                id: 4,
+                id: 3,
                 title: "FAQs",
                 link: "/faq",
                 icon: "HelpCircle"
