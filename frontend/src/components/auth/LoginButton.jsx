@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { User, LogOut } from 'lucide-react';
 import LoginModal from './login';
+import { motion } from 'framer-motion';
 
 const LoginButton = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -80,13 +81,13 @@ const LoginButton = () => {
 
   return (
     <>
-      <button
+      <motion.button
         onClick={openModal}
-        className="text-coffee px-6 py-2 rounded-full transition-colors hover:bg-gray-100"
+        className=" text-coffee px-6 py-2 rounded-full transition-colors"
       >
         Sign In
       </button>
-      <LoginModal isOpen={isModalOpen} onClose={closeModal} initialMode="login" />
+      <LoginModal isOpen={isModalOpen} onClose={closeModal} />
     </>
   );
 };

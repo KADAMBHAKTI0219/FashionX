@@ -104,13 +104,13 @@ const Testimonials = () => {
           >
             {testimonialData.map((testimonial) => (
               <SwiperSlide key={testimonial.id}>
-                <div className="rounded-xl sm:rounded-2xl overflow-hidden mx-1 sm:mx-2 my-2 sm:my-4 max-w-5xl mx-auto h-[350px] sm:h-[450px] md:h-[550px]">
+                <div className="rounded-xl sm:rounded-2xl overflow-hidden mx-1 sm:mx-2 my-2 sm:my-4 max-w-5xl mx-auto">
                   <div className="flex flex-col md:flex-row h-full">
-                    <div className="md:w-1/2 relative overflow-hidden h-40 sm:h-52 md:h-full">
+                    <div className="md:w-1/2 relative overflow-hidden md:h-full">
                       <img 
                         src={testimonial.image} 
                         alt={testimonial.name} 
-                        className="w-full h-full object-cover"
+                        className="w-full h-full "
                       />
                     </div>
                     <div className="md:w-1/2 p-3 sm:p-4 md:p-6 lg:p-8 flex flex-col justify-center h-full">
